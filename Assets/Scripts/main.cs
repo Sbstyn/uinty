@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +11,7 @@ public class main : MonoBehaviour
 
     public Text dectxt;
     public Text postxt;
+    public Text btnrtxt;
 
     public Camera cam;
     public Slider camsize;
@@ -21,6 +22,7 @@ public class main : MonoBehaviour
     public int dec = 0;
     public int started = 1;
     public bool isstarted = true;
+    public bool isrnd = false;
 
     private GameObject clones;
 
@@ -72,16 +74,43 @@ public class main : MonoBehaviour
             clones.tag = "clone";
         }
 
+        if (isrnd == true)
+        {
+            if (player.transform.position.x <= -82)
+            {
+                player.transform.Translate(Vector3.right * movementSpeed);
+            }
+            if (player.transform.position.x >= 82)
+            {
+                player.transform.Translate(Vector3.left * movementSpeed);
+            }
+            if (player.transform.position.y <= -40)
+            {
+                player.transform.Translate(Vector3.up * movementSpeed);
+            }
+            if (player.transform.position.y >= 40)
+            {
+                player.transform.Translate(Vector3.down * movementSpeed);
+            }
+        }
+
         dec += 1;
 
         dectxt.text = "Decisions: " + dec.ToString();
         postxt.text = "Position x: " + player.transform.position.x + " y: " + player.transform.position.y;
 
-        if (player.transform.position.x == 0 && player.transform.position.y == 0)
+        if (isrnd == false)
         {
-            postxt.text = "SUCCESS! (Click here to reset) " + "Position x: " + player.transform.position.x + " y: " + player.transform.position.y;
-            StartCoroutine(Coroutines());
-            isstarted = false;
+            if (player.transform.position.x == 0 && player.transform.position.y == 0)
+            {
+                postxt.text = "SUCCESS! (Click here to reset) " + "Position x: " + player.transform.position.x + " y: " + player.transform.position.y;
+                StartCoroutine(Coroutines());
+                isstarted = false;
+            }
+            else
+            {
+                StartCoroutine(Coroutines());
+            }
         }
         else
         {
@@ -91,21 +120,53 @@ public class main : MonoBehaviour
 
     public void gameStart()
     {
-        var clones = GameObject.FindGameObjectsWithTag("clone");
-        foreach (var clone in clones)
+        if (isrnd == false)
+        {
+            var clones = GameObject.FindGameObjectsWithTag("clone");
+            foreach (var clone in clones)
             {
                 Destroy(clone);
             }
-        started = 0;
-        StartCoroutine(Coroutines());
-        player.transform.position = new Vector3(6, -1);
-        dec = 0;
-        started = 1;
-        isstarted = true;
+            started = 0;
+            StartCoroutine(Coroutines());
+            player.transform.position = new Vector3(6, -1);
+            dec = 0;
+            started = 1;
+            isstarted = true;
+            fin.SetActive(true);
+        }
+        else if (isrnd == true)
+        {
+            var clones = GameObject.FindGameObjectsWithTag("clone");
+            foreach (var clone in clones)
+            {
+                Destroy(clone);
+            }
+            started = 0;
+            StartCoroutine(Coroutines());
+            player.transform.position = new Vector3(0, 0);
+            dec = 0;
+            started = 1;
+            isstarted = true;
+            fin.SetActive(false);
+        }
     }
 
     public void CamSize()
     {
         cam.orthographicSize = 5 * camsize.value;
+    }
+    public void onRndBtn()
+    {
+        if (isrnd == true)
+        {
+            isrnd = false;
+            btnrtxt.text = "";
+        }
+        else if (isrnd == false)
+        {
+            isrnd = true;
+            btnrtxt.text = "R";
+        }
     }
 }
