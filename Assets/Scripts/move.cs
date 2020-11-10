@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -11,7 +11,6 @@ public class move : NetworkBehaviour
     public Camera cam;
     public Text speedmeter;
     public bool isOnGround;
-
     public int model = 0;
 
     //public Camera HUDCAM;
@@ -25,6 +24,7 @@ public class move : NetworkBehaviour
     private void Start()
     {
         GetComponentInChildren<Camera>().enabled = true;
+        Physics.gravity = new Vector3(0, -20, 0);
     }
     void Awake()
     {
@@ -36,6 +36,18 @@ public class move : NetworkBehaviour
     }
     void Update()
     {
+        /*if (Input.GetKey(KeyCode.L) && Input.GetKeyDown(KeyCode.P))
+        {
+            if (GameObject.Find("arenaa").GetComponent<rna>().isrna == false)
+            {
+                GameObject.Find("arenaa").GetComponent<rna>().isrna = true;
+            }
+            else
+            {
+                GameObject.Find("arenaa").GetComponent<rna>().isrna = false;
+            }
+        }*/
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (model == 1)
@@ -51,11 +63,11 @@ public class move : NetworkBehaviour
         {
             if (speed >= 0f)
             {
-                speed = speed - .02f;
+                speed = speed - .15f;
             }
             else if (speed <= 0f)
             {
-                speed = speed + .02f;
+                speed = speed + .15f;
             }
         }
 
@@ -63,7 +75,7 @@ public class move : NetworkBehaviour
         {
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, transform.position.y + 10, transform.position.z);
             rb.velocity = new Vector3(0, 0, 0);
-            gameObject.transform.rotation = new Quaternion(0, gameObject.transform.rotation.y, 0, 0);
+            gameObject.transform.rotation = new Quaternion(0, gameObject.transform.rotation.eulerAngles.y, 0, 0);
         }
 
         if (gameObject.transform.position.y < -20)
@@ -115,6 +127,10 @@ public class move : NetworkBehaviour
             else if (speed >= 0f)
             {
                 speed = speed - .03f;
+            }
+            else if (speed <= 0f)
+            {
+                speed = speed + .03f;
             }
 
             if (Input.GetKey(KeyCode.LeftShift))
@@ -173,7 +189,7 @@ public class move : NetworkBehaviour
     {
         if (collision.collider.tag == "ground")
         {
-            rb.velocity = new Vector3(0,0,0);
+            rb.velocity = new Vector3(0, 0, 0);
             isOnGround = true;
         }
     }
@@ -186,11 +202,13 @@ public class move : NetworkBehaviour
         if(other.gameObject.transform.tag == "ground")
         {
             isOnGround = true;
-            Debug.Log("pp");
         }
     }
     private void OnTriggerExit(Collider other)
     {
         isOnGround = false;
+        /*Vector3 f = new Vector3(rb.velocity.x, rb.velocity.y, rb.velocity.z);
+        speed = 0;
+        rb.AddForce(f.x, f.y, f.z);*/
     }
 }
